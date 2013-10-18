@@ -18,7 +18,7 @@ $url='http://ru.wikipedia.org/wiki/%D0%9A%D0%B0%D1%82%D0%B5%D0%B3%D0%BE%D1%80%D0
 set_time_limit(0);
 
 
-
+//Функция подготовки имен для файлов
 function escapeName($string)
 {
 	$string = str_replace(array('/', ' ', ':', '.', '—'), '_', $string);
@@ -53,7 +53,7 @@ function escapeName($string)
 
 
 
-
+//Получить все категории на странице
 function getCategories($text)
 {
 	$arr = array();
@@ -66,6 +66,7 @@ function getCategories($text)
 	return $arr;	 
 }
 
+//Получить список страниц
 function getPages($text)
 {
 	$html = str_get_html($text);
@@ -79,6 +80,7 @@ function getPages($text)
 	return $arr;	 
 }
 
+//Получить контент
 function getContent($suburl)
 {
 	global $mobWikiTemplate; 
@@ -92,19 +94,19 @@ function getContent($suburl)
 	return $content;	 
 }
 
+//Простая функция загрузки страницы
 function getPage($url)
 {
-	//Simple page load function
 	return file_get_contents($url);
 }
 
-
+//Простая функция загрузки страницы
 function slowLoad($url)
 {
-	//Simple page load function two
 	return file_get_contents($url);
 }
 
+//Функция сохранения на диск файла страницы
 function save($name, $content)
 {
 	global $homedir;
@@ -113,7 +115,7 @@ function save($name, $content)
 
 
 
-
+//Разобрать дерево 
 function parseTree($url, $ind, array $indexArray)
 {
 
@@ -156,6 +158,7 @@ function parseTree($url, $ind, array $indexArray)
 
 }
 
+//Загружаем шаблоны страниц
 function loadTemplates()
 {
 	global $homedir;
@@ -167,7 +170,7 @@ function loadTemplates()
 
 }
 
-
+//Поиск необходимого поддерева
 function sarchSubtree(array $subtree, $place, array $bread) 
 { 
 	global $breadTree;
@@ -192,6 +195,7 @@ function sarchSubtree(array $subtree, $place, array $bread)
 	}
 	return array();
 } 
+
 
 function modArticles(array $articles)
 {
@@ -221,7 +225,7 @@ function modCategories(array $categories)
 
 }
 
-
+//Вывод на экран одного слоя
 function showTree($index, $place)
 {
 	global $breadTree;
@@ -276,7 +280,7 @@ function showTree($index, $place)
 }
 
 
-
+//Вывод на экран содержимого файла
 function showFile($file)
 {
 	
@@ -288,6 +292,7 @@ function showFile($file)
 
 }
 
+//Проверить скрипт на клиенте
 function sendPing($url)
 {
 	return (getPage($url) == md5('ping'));
@@ -297,6 +302,7 @@ function sendPing($url)
 // --------------------------Main start---------------------
 
 
+		//Хак для работы из консоли
 		if(isset($argv) && sizeof($argv)>0)
 			foreach($argv as $command)
 			{
@@ -310,6 +316,7 @@ function sendPing($url)
 		switch($_GET['action'])
 		{
 		
+			//Распарсить url
 			case 'parse':
 			{
 				
@@ -319,6 +326,8 @@ function sendPing($url)
 				echo 'parsed';
 				break;
 			}
+			
+			//Распаковать архив
 			case 'unzip':
 			{
 				$zip = new ZipArchive;
@@ -336,6 +345,7 @@ function sendPing($url)
 
 				break;
 			}
+			//Запаковать архив
 			case 'zip':
 			{
 				@unlink($homedir.'archive.zip');
@@ -348,6 +358,7 @@ function sendPing($url)
 					echo 'Архив не создан';
 				break;
 			}
+			//Сохранить новые шаблоны
 			case 'templates':
 			{
 				file_put_contents($homedir.'data/layout.html', stripcslashes($_POST['layout']));
@@ -357,11 +368,13 @@ function sendPing($url)
 				echo 'Шаблоны изменены';
 				break;
 			}
+			//Ответить на пинг
 			case 'ping':
 			{
 				if(is_writable($homedir.'data/index.db') && is_writable($homedir.'data/articles')) echo md5('ping');
 				break;
 			}
+			//Отправить пинг
 			case 'sendPing':
 			{
 				if(!isset($_GET['url'])) die('Нет адреса');
@@ -371,6 +384,7 @@ function sendPing($url)
 					echo 'Тест провален';
 				break;
 			}
+			//Отправить архив со статьями на клиентскую сторону
 			case 'send':
 			{
 				if(!isset($_GET['url'])) die('Нет адреса');
@@ -383,6 +397,7 @@ function sendPing($url)
 				
 				break;
 			}
+			//Получения файла с сервера по его запросу
 			case 'recivePing':
 			{
 				if(!isset($_GET['url'])) die('fail');
@@ -391,6 +406,7 @@ function sendPing($url)
 				die('true');
 				break;
 			}
+			//Вывод статей и категорий
 			default:
 			{				
 				$breadTree=array();
