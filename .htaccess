@@ -1,0 +1,3 @@
+DirectoryIndex index.php
+RewriteEngine on
+RewriteRule ^wiki/([^/]*)/?$ index.php?action=show&place=$1 [L]
